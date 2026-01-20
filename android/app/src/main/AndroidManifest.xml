@@ -1,8 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="food_share"
+        android:label="Food Share"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="2463669147364460"/>
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="3356c8cbf74ad976514a86640ca66f06"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
