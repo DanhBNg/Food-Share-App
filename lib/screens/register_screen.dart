@@ -140,7 +140,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                   const SizedBox(height: 12),
 
-                  // 👉 Giữ note người trước + làm nổi bật Đăng nhập
                   TextButton(
                     onPressed: () => Navigator.pop(context),
                     child: const Text.rich(
