@@ -26,7 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     setState(() => isLoading = false);
-
     if (!mounted) return;
 
     if (user == null) {
@@ -36,6 +35,42 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    }
+  }
+
+  void loginWithGoogle() async {
+    final user = await _authService.loginWithGoogle();
+    if (!mounted) return;
+
+    if (user != null) {
+      final email = user.email ?? 'không xác định';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng nhập bằng Google: $email')),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    }
+  }
+
+  void loginWithFacebook() async {
+    final user = await _authService.loginWithFacebook();
+    if (!mounted) return;
+
+    if (user != null) {
+      final email = user.email ?? 'không xác định';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng nhập bằng Facebook: $email')),
+      );
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -60,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF6EC6FF), // xanh nước biển
+              Color(0xFF6EC6FF), // xanh biển
               Color(0xFFFFC1CC), // hồng nhạt
             ],
             begin: Alignment.topLeft,
@@ -148,6 +183,30 @@ class _LoginScreenState extends State<LoginScreen> {
                         ? const CircularProgressIndicator()
                         : const Text('Đăng nhập'),
                   ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // 🔹 Google + Facebook
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: loginWithGoogle,
+                      icon: Image.asset(
+                        'assets/google.png',
+                        height: 32,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    IconButton(
+                      onPressed: loginWithFacebook,
+                      icon: Image.asset(
+                        'assets/facebook.png',
+                        height: 32,
+                      ),
+                    ),
+                  ],
                 ),
 
                 const SizedBox(height: 12),
