@@ -98,24 +98,4 @@ class PostService {
       rethrow;
     }
   }
-
-  // Cập nhật bài đăng
-  Future<void> updatePost(
-    String postId, {
-    required String ingredientName,
-    required String quantity,
-    required String region,
-    required String description,
-  }) async {
-    try {
-      await _postsRef.child(postId).update({
-        'ingredientName': ingredientName,
-        'quantity': quantity,
-        'region': region,
-        'description': description,
-      });
-    } catch (e) {
-      rethrow;
-    }
-  }
 }
