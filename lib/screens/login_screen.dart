@@ -48,7 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (user != null) {
       final email = user.email ?? 'không xác định';
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Đăng nhập bằng Google: $email')),
       );
@@ -66,7 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (user != null) {
       final email = user.email ?? 'không xác định';
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Đăng nhập bằng Facebook: $email')),
       );
@@ -95,8 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF6EC6FF), // xanh biển
-              Color(0xFFFFC1CC), // hồng nhạt
+              Color(0xFF6EC6FF),
+              Color(0xFFFFC1CC),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -147,11 +145,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 TextField(
                   controller: emailController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
+                    hintText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
 
@@ -159,13 +164,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 TextField(
                   controller: passwordController,
-                  decoration: const InputDecoration(
+                  obscureText: true,
+                  decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    labelText: 'Mật khẩu',
-                    border: OutlineInputBorder(),
+                    hintText: 'Mật khẩu',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
-                  obscureText: true,
                 ),
 
                 const SizedBox(height: 20),
@@ -176,66 +188,71 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: isLoading ? null : login,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.blueAccent,
+                      backgroundColor: Colors.blueAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text('Đăng nhập'),
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                      'Đăng nhập',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 16),
 
-                // 🔹 Google + Facebook
+                // Google + Facebook
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     IconButton(
                       onPressed: loginWithGoogle,
-                      icon: Image.asset(
-                        'assets/google.png',
-                        height: 32,
-                      ),
+                      icon: Image.asset('assets/google.png', height: 32),
                     ),
                     const SizedBox(width: 24),
                     IconButton(
                       onPressed: loginWithFacebook,
-                      icon: Image.asset(
-                        'assets/facebook.png',
-                        height: 32,
-                      ),
+                      icon: Image.asset('assets/facebook.png', height: 32),
                     ),
                   ],
                 ),
 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const RegisterScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text.rich(
-                    TextSpan(
-                      text: 'Chưa có tài khoản? ',
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Chưa có tài khoản? ',
                       style: TextStyle(color: Colors.white),
-                      children: [
-                        TextSpan(
-                          text: 'Đăng ký',
-                          style: TextStyle(
-                            color: Colors.yellowAccent,
-                            fontWeight: FontWeight.bold,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                      ],
                     ),
-                  ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Đăng ký',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                          decorationColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
