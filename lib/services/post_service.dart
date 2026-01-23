@@ -15,6 +15,7 @@ class PostService {
     required String quantity,
     required String description,
     required String address,
+    String? imageUrl,
   }) async {
     final user = _auth.currentUser;
     if (user == null) return;
@@ -34,6 +35,7 @@ class PostService {
         'quantity': quantity,
         'address': address,
         'description': description,
+        'imageUrl': imageUrl,
         'createdAt': Timestamp.now(),
       });
     } catch (e) {

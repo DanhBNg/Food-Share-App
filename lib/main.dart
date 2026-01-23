@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 
 import 'firebase_options.dart';
 import 'screens/login_screen.dart';
@@ -18,6 +19,11 @@ void main() async {
     // Firebase already initialized
     print('Firebase initialization: $e');
   }
+
+  await Supabase.initialize(
+    url: 'https://tyjrrphjrqkhdlupzxan.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5anJycGhqcnFraGRsdXB6eGFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDM0ODksImV4cCI6MjA4NDcxOTQ4OX0.cwsCnGwBCmRuFanEJeVddeUbNEPeoIj7HSF1zRMwTQw',
+  );
   
   runApp(const MyApp());
 }

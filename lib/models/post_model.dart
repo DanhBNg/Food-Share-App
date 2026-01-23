@@ -9,6 +9,7 @@ class Post {
   final String quantity;
   final String address;
   final String description;
+  final String? imageUrl;
   final DateTime createdAt;
 
   Post({
@@ -20,6 +21,7 @@ class Post {
     required this.quantity,
     required this.address,
     required this.description,
+    required this.imageUrl,
     required this.createdAt,
   });
 
@@ -35,6 +37,7 @@ class Post {
       quantity: data['quantity'] ?? '',
       address: data['address'] ?? '',
       description: data['description'] ?? '',
+      imageUrl: data['imageUrl'],
       createdAt: (data['createdAt'] as Timestamp).toDate(),
     );
   }
@@ -48,6 +51,7 @@ class Post {
       'quantity': quantity,
       'address': address,
       'description': description,
+      'imageUrl': imageUrl,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
