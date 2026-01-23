@@ -21,7 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   final nameCtrl = TextEditingController();
   final phoneCtrl = TextEditingController();
-  final dobCtrl = TextEditingController();
+  final addressCtrl = TextEditingController();
 
   File? pickedImage;
 
@@ -33,17 +33,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime(2000),
-      firstDate: DateTime(1950),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      dobCtrl.text = "${picked.day}/${picked.month}/${picked.year}";
-    }
-  }
 
   Future<String?> uploadAvatar(File image) async {
     try {
@@ -74,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await usersRef.doc(user!.uid).set({
       'name': nameCtrl.text,
       'phone': phoneCtrl.text,
-      'dob': dobCtrl.text,
+      'address': addressCtrl.text,
       if (photoUrl != null) 'photo': photoUrl,
     }, SetOptions(merge: true));
 
@@ -111,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (!_didLoad) {
               nameCtrl.text = data['name'] ?? user!.displayName ?? '';
               phoneCtrl.text = data['phone'] ?? '';
-              dobCtrl.text = data['dob'] ?? '';
+              addressCtrl.text = data['address'] ?? '';
               _didLoad = true;
             }
 
@@ -161,14 +150,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       TextEditingController(text: user!.email ?? ''),
                       false),
                   _buildField('SĐT', phoneCtrl, isEditing),
-                  isEditing
-                      ? GestureDetector(
-                    onTap: pickDate,
-                    child: AbsorbPointer(
-                      child: _buildField('Ngày sinh', dobCtrl, true),
-                    ),
-                  )
-                      : _buildField('Ngày sinh', dobCtrl, false),
+                  _buildField('Địa chỉ', addressCtrl, isEditing),
+
 
                   const SizedBox(height: 24),
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../services/post_service.dart';
 
 class PostScreen extends StatefulWidget {
@@ -13,30 +15,47 @@ class _PostScreenState extends State<PostScreen> {
   final _formKey = GlobalKey<FormState>();
   final _ingredientController = TextEditingController();
   final _quantityController = TextEditingController();
-  final _regionController = TextEditingController();
+
+  final _addressController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _postService = PostService();
   bool _isLoading = false;
 
-  final List<String> regions = [
-    'Hà Nội',
-    'TP.HCM',
-    'Đà Nẵng',
-    'Cần Thơ',
-    'Hải Phòng',
-    'Biên Hòa',
-    'Nha Trang',
-    'Đà Lạt',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadUserAddress();
+  }
+
 
   @override
   void dispose() {
     _ingredientController.dispose();
     _quantityController.dispose();
-    _regionController.dispose();
+    _addressController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
+
+  Future<void> _loadUserAddress() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (doc.exists) {
+      final data = doc.data();
+      final address = data?['address'];
+
+      if (address != null && address.toString().isNotEmpty) {
+        _addressController.text = address;
+      }
+    }
+  }
+
 
   Future<void> _submitPost() async {
     if (!_formKey.currentState!.validate()) {
@@ -59,9 +78,10 @@ class _PostScreenState extends State<PostScreen> {
       await _postService.createPost(
         ingredientName: _ingredientController.text.trim(),
         quantity: _quantityController.text.trim(),
-        region: _regionController.text.trim(),
+        //region: _regionController.text.trim(),
+        address: _addressController.text.trim(),
         description: _descriptionController.text.trim(),
-        userName: currentUser.displayName ?? currentUser.email ?? 'Ẩn danh',
+        //userName: currentUser.displayName ?? currentUser.email ?? 'Ẩn danh',
       );
 
       if (mounted) {
@@ -136,33 +156,50 @@ class _PostScreenState extends State<PostScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
+                TextFormField(
+                  controller: _addressController,
                   decoration: InputDecoration(
-                    labelText: 'Khu vực / Tỉnh *',
+                    labelText: 'Địa chỉ *',
+                    hintText: 'VD: 123 Lê Lợi, Quận 1, TP.HCM',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    prefixIcon: const Icon(Icons.location_on),
+                    prefixIcon: const Icon(Icons.place),
                   ),
-                  value: _regionController.text.isEmpty ? null : _regionController.text,
-                  items: regions
-                      .map((region) => DropdownMenuItem(
-                            value: region,
-                            child: Text(region),
-                          ))
-                      .toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      _regionController.text = value;
-                    }
-                  },
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vui lòng chọn khu vực';
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Vui lòng nhập địa chỉ';
                     }
                     return null;
                   },
                 ),
+                // DropdownButtonFormField<String>(
+                //   decoration: InputDecoration(
+                //     labelText: 'Khu vực / Tỉnh *',
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(8),
+                //     ),
+                //     prefixIcon: const Icon(Icons.location_on),
+                //   ),
+                //   value: _regionController.text.isEmpty ? null : _regionController.text,
+                //   items: regions
+                //       .map((region) => DropdownMenuItem(
+                //             value: region,
+                //             child: Text(region),
+                //           ))
+                //       .toList(),
+                //   onChanged: (value) {
+                //     if (value != null) {
+                //       _regionController.text = value;
+                //     }
+                //   },
+                //   validator: (value) {
+                //     if (value == null || value.isEmpty) {
+                //       return 'Vui lòng chọn khu vực';
+                //     }
+                //     return null;
+                //   },
+                // ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _descriptionController,

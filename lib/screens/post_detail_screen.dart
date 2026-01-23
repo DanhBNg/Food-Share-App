@@ -123,7 +123,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   ),
                                 ),
                                 Text(
-                                  widget.post.region,
+                                  widget.post.address,
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,

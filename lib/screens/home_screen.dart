@@ -14,81 +14,47 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final PostService _postService = PostService();
-  String _selectedRegion = '';
+  //String _selectedRegion = '';
 
-  final List<String> regions = [
-    'Hà Nội',
-    'TP.HCM',
-    'Đà Nẵng',
-    'Cần Thơ',
-    'Hải Phòng',
-    'Biên Hòa',
-    'Nha Trang',
-    'Đà Lạt',
-  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Food Share'),
         backgroundColor: Colors.green,
         elevation: 0,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Tìm theo tỉnh/thành....',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text(
+              'Food Share',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+
               ),
             ),
-          ),
+            SizedBox(height: 5),
+            Text(
+              'Nơi kết nối cộng đồng, giao lưu và chia sẻ nguyên liệu thực phẩm',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                color: Colors.white70,
+              ),
+            ),
+          ],
         ),
       ),
+
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Chọn tỉnh
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Wrap(
-                direction: Axis.horizontal,
-                spacing: 8,
-                children: [
-                  FilterChip(
-                    label: const Text('Tất cả'),
-                    selected: _selectedRegion.isEmpty,
-                    onSelected: (selected) {
-                      setState(() => _selectedRegion = '');
-                    },
-                  ),
-                  ...regions.map(
-                    (region) => FilterChip(
-                      label: Text(region),
-                      selected: _selectedRegion == region,
-                      onSelected: (selected) {
-                        setState(() => _selectedRegion = selected ? region : '');
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
 
           // Danh sách bài đăng
           Expanded(
             child: StreamBuilder<List<Post>>(
-              stream: _postService.getPostsByRegion(_selectedRegion),
+              stream: _postService.getAllPosts(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
@@ -117,15 +83,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.grey[400],
                         ),
                         const SizedBox(height: 16),
-                        Text(
-                          _selectedRegion.isEmpty
-                              ? 'Chưa có bài đăng nào'
-                              : 'Không có bài đăng nào ở $_selectedRegion',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 16,
-                          ),
-                        ),
+                        // Text(
+                        //   _selectedRegion.isEmpty
+                        //       ? 'Chưa có bài đăng nào'
+                        //       : 'Không có bài đăng nào ở $_selectedRegion',
+                        //   style: TextStyle(
+                        //     color: Colors.grey[600],
+                        //     fontSize: 16,
+                        //   ),
+                        // ),
                       ],
                     ),
                   );
