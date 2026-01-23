@@ -5,6 +5,7 @@ class Post {
   final String userId;
   final String userName;
   final String ingredientName;
+  final String ingredientNameLower;
   final String quantity;
   final String address;
   final String description;
@@ -15,55 +16,39 @@ class Post {
     required this.userId,
     required this.userName,
     required this.ingredientName,
+    required this.ingredientNameLower,
     required this.quantity,
     required this.address,
     required this.description,
     required this.createdAt,
   });
 
-  // // Chuyển đổi từ JSON sang model
-  // factory Post.fromMap(Map<dynamic, dynamic> map, String docId) {
-  //   return Post(
-  //     id: docId,
-  //     userId: map['userId'] ?? '',
-  //     userName: map['userName'] ?? 'Ẩn danh',
-  //     ingredientName: map['ingredientName'] ?? '',
-  //     quantity: map['quantity'] ?? '',
-  //     address: map['address'] ?? '',
-  //     description: map['description'] ?? '',
-  //     createdAt: map['createdAt'] != null
-  //         ? DateTime.parse(map['createdAt'])
-  //         : DateTime.now(),
-  //   );
-  // }
+  factory Post.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
 
-  // Chuyển đổi từ model sang JSON
+    return Post(
+      id: doc.id,
+      userId: data['userId'] ?? '',
+      userName: data['userName'] ?? 'Ẩn danh',
+      ingredientName: data['ingredientName'] ?? '',
+      ingredientNameLower: data['ingredientNameLower'] ?? '',
+      quantity: data['quantity'] ?? '',
+      address: data['address'] ?? '',
+      description: data['description'] ?? '',
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'userId': userId,
       'userName': userName,
       'ingredientName': ingredientName,
+      'ingredientNameLower': ingredientName.toLowerCase(),
       'quantity': quantity,
       'address': address,
       'description': description,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': Timestamp.fromDate(createdAt),
     };
   }
-
-  factory Post.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-    return Post(
-      id: doc.id,
-      userId: data['userId'],
-      userName: data['userName'],
-      ingredientName: data['ingredientName'],
-      quantity: data['quantity'],
-      address: data['address'],
-      description: data['description'],
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
-    );
-  }
 }
-
-
-

@@ -173,33 +173,7 @@ class _PostScreenState extends State<PostScreen> {
                     return null;
                   },
                 ),
-                // DropdownButtonFormField<String>(
-                //   decoration: InputDecoration(
-                //     labelText: 'Khu vực / Tỉnh *',
-                //     border: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //     prefixIcon: const Icon(Icons.location_on),
-                //   ),
-                //   value: _regionController.text.isEmpty ? null : _regionController.text,
-                //   items: regions
-                //       .map((region) => DropdownMenuItem(
-                //             value: region,
-                //             child: Text(region),
-                //           ))
-                //       .toList(),
-                //   onChanged: (value) {
-                //     if (value != null) {
-                //       _regionController.text = value;
-                //     }
-                //   },
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Vui lòng chọn khu vực';
-                //     }
-                //     return null;
-                //   },
-                // ),
+
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _descriptionController,

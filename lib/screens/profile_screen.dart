@@ -86,8 +86,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Builder(
       builder: (scaffoldContext) => Scaffold(
-        backgroundColor: const Color(0xFFF6F6F6), // ✅ background cũ
-        appBar: AppBar(title: const Text('Trang cá nhân')),
+        backgroundColor: const Color(0xFFF6F6F6),
+        appBar: AppBar(title: const Text('Trang cá nhân'), backgroundColor: Colors.green),
         body: StreamBuilder<DocumentSnapshot>(
           stream: usersRef.doc(user!.uid).snapshots(),
           builder: (context, snapshot) {

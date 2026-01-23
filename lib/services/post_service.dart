@@ -20,7 +20,6 @@ class PostService {
     if (user == null) return;
 
     try {
-      // 🔥 LẤY TÊN USER TỪ FIRESTORE (PROFILE)
       final userDoc = await _usersRef.doc(user.uid).get();
       final userData = userDoc.data() as Map<String, dynamic>?;
 
@@ -31,10 +30,11 @@ class PostService {
         'userId': user.uid,
         'userName': userName,
         'ingredientName': ingredientName,
+        'ingredientNameLower': ingredientName.toLowerCase(),
         'quantity': quantity,
         'address': address,
         'description': description,
-        'createdAt': FieldValue.serverTimestamp(),
+        'createdAt': Timestamp.now(),
       });
     } catch (e) {
       rethrow;

@@ -83,15 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.grey[400],
                         ),
                         const SizedBox(height: 16),
-                        // Text(
-                        //   _selectedRegion.isEmpty
-                        //       ? 'Chưa có bài đăng nào'
-                        //       : 'Không có bài đăng nào ở $_selectedRegion',
-                        //   style: TextStyle(
-                        //     color: Colors.grey[600],
-                        //     fontSize: 16,
-                        //   ),
-                        // ),
                       ],
                     ),
                   );
@@ -232,7 +223,7 @@ class PostCard extends StatelessWidget {
                         .snapshots(),
                     builder: (context, snapshot) {
                       String userName = post.userName;
-                      
+
                       if (snapshot.hasData && snapshot.data!.exists) {
                         final userData = snapshot.data!.data() as Map<String, dynamic>?;
                         userName = userData?['name'] ?? post.userName;
