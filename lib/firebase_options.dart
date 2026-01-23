@@ -46,6 +46,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '459962607492',
     projectId: 'food-share-fce9b',
     authDomain: 'food-share-fce9b.firebaseapp.com',
+    databaseURL: 'https://food-share-fce9b-default-rtdb.firebaseio.com',
     storageBucket: 'food-share-fce9b.firebasestorage.app',
     measurementId: 'G-VTFYZFNRFD',
   );
@@ -55,6 +56,7 @@ class DefaultFirebaseOptions {
     appId: '1:459962607492:android:8a6806fa57470e5b9d5fd1',
     messagingSenderId: '459962607492',
     projectId: 'food-share-fce9b',
+    databaseURL: 'https://food-share-fce9b-default-rtdb.firebaseio.com',
     storageBucket: 'food-share-fce9b.firebasestorage.app',
   );
 
@@ -63,6 +65,7 @@ class DefaultFirebaseOptions {
     appId: '1:459962607492:ios:0cd668f34487cb769d5fd1',
     messagingSenderId: '459962607492',
     projectId: 'food-share-fce9b',
+    databaseURL: 'https://food-share-fce9b-default-rtdb.firebaseio.com',
     storageBucket: 'food-share-fce9b.firebasestorage.app',
     iosBundleId: 'com.example.foodShare',
   );
@@ -72,6 +75,7 @@ class DefaultFirebaseOptions {
     appId: '1:459962607492:ios:0cd668f34487cb769d5fd1',
     messagingSenderId: '459962607492',
     projectId: 'food-share-fce9b',
+    databaseURL: 'https://food-share-fce9b-default-rtdb.firebaseio.com',
     storageBucket: 'food-share-fce9b.firebasestorage.app',
     iosBundleId: 'com.example.foodShare',
   );
@@ -82,6 +86,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '459962607492',
     projectId: 'food-share-fce9b',
     authDomain: 'food-share-fce9b.firebaseapp.com',
+    databaseURL: 'https://food-share-fce9b-default-rtdb.firebaseio.com',
     storageBucket: 'food-share-fce9b.firebasestorage.app',
     measurementId: 'G-5KQPY34JXE',
   );
