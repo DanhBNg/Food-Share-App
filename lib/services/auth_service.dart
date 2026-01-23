@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -71,6 +72,17 @@ class AuthService {
       print('Facebook login error: $e');
       return null;
     }
+  }
+
+  Future<void> saveUserToFirestore(User user) async {
+    final ref = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    await ref.set({
+      'name': user.displayName,
+      'email': user.email,
+      'photo': user.photoURL,
+      'role': 'Người mua',
+      'createdAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 
   // Đăng xuất
