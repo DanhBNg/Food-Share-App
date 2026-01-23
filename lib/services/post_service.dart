@@ -1,99 +1,73 @@
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/post_model.dart';
 
 class PostService {
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Reference đến nhánh posts trong Firebase
-  DatabaseReference get _postsRef => _database.ref('posts');
+  CollectionReference get _postsRef => _firestore.collection('posts');
+  CollectionReference get _usersRef => _firestore.collection('users');
 
-  // Tạo bài đăng mới
+  // ================== CREATE POST ==================
   Future<void> createPost({
     required String ingredientName,
     required String quantity,
-    required String region,
     required String description,
-    required String userName,
+    required String address,
   }) async {
-    try {
-      final userId = _auth.currentUser?.uid ?? '';
-      
-      final post = Post(
-        id: '', // Firebase sẽ tự động tạo id
-        userId: userId,
-        userName: userName,
-        ingredientName: ingredientName,
-        quantity: quantity,
-        region: region,
-        description: description,
-        createdAt: DateTime.now(),
-      );
+    final user = _auth.currentUser;
+    if (user == null) return;
 
-      await _postsRef.push().set(post.toMap());
+    try {
+      // 🔥 LẤY TÊN USER TỪ FIRESTORE (PROFILE)
+      final userDoc = await _usersRef.doc(user.uid).get();
+      final userData = userDoc.data() as Map<String, dynamic>?;
+
+      final userName =
+          userData?['displayName'] ?? user.email ?? 'Người dùng';
+
+      await _postsRef.add({
+        'userId': user.uid,
+        'userName': userName,
+        'ingredientName': ingredientName,
+        'quantity': quantity,
+        'address': address,
+        'description': description,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
     } catch (e) {
       rethrow;
     }
   }
 
-  // Lấy danh sách bài đăng theo tỉnh/khu vực
-  Stream<List<Post>> getPostsByRegion(String region) {
-    if (region.isEmpty) {
-      // Nếu không chọn tỉnh, hiển thị tất cả bài đăng
-      return _postsRef
-          .orderByChild('createdAt')
-          .onValue
-          .map((event) {
-            final posts = <Post>[];
-            if (event.snapshot.exists) {
-              final Map<dynamic, dynamic> values =
-                  event.snapshot.value as Map<dynamic, dynamic>;
-              values.forEach((key, value) {
-                posts.add(Post.fromMap(value, key));
-              });
-            }
-            // Sắp xếp từ mới nhất đến cũ nhất
-            posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-            return posts;
-          });
-    } else {
-      // Lọc theo khu vực
-      return _postsRef.onValue.map((event) {
-        final posts = <Post>[];
-        if (event.snapshot.exists) {
-          final Map<dynamic, dynamic> values =
-              event.snapshot.value as Map<dynamic, dynamic>;
-          values.forEach((key, value) {
-            if (value['region'] == region) {
-              posts.add(Post.fromMap(value, key));
-            }
-          });
-        }
-        // Sắp xếp từ mới nhất đến cũ nhất
-        posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        return posts;
-      });
-    }
+  // ================== GET ALL POSTS ==================
+  Stream<List<Post>> getAllPosts() {
+    return _postsRef
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => Post.fromFirestore(doc))
+          .toList();
+    });
   }
 
-  // Lấy thông tin một bài đăng
+  // ================== GET POST BY ID ==================
   Future<Post?> getPostById(String postId) async {
     try {
-      final snapshot = await _postsRef.child(postId).get();
-      if (snapshot.exists) {
-        return Post.fromMap(snapshot.value as Map<dynamic, dynamic>, postId);
-      }
-      return null;
+      final doc = await _postsRef.doc(postId).get();
+      if (!doc.exists) return null;
+      return Post.fromFirestore(doc);
     } catch (e) {
       rethrow;
     }
   }
 
-  // Xóa bài đăng
+  // ================== DELETE POST ==================
   Future<void> deletePost(String postId) async {
     try {
-      await _postsRef.child(postId).remove();
+      await _postsRef.doc(postId).delete();
     } catch (e) {
       rethrow;
     }
