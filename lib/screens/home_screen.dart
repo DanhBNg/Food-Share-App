@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'post_screen.dart';
 import 'post_detail_screen.dart';
 import '../models/post_model.dart';
@@ -257,23 +258,42 @@ class PostCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  // Khu vực
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        size: 14,
-                        color: Colors.green[600],
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        post.region,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
+                  // Người đăng bài
+                  StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(post.userId)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      String userName = post.userName;
+                      
+                      if (snapshot.hasData && snapshot.data!.exists) {
+                        final userData = snapshot.data!.data() as Map<String, dynamic>?;
+                        userName = userData?['name'] ?? post.userName;
+                      }
+
+                      return Row(
+                        children: [
+                          Icon(
+                            Icons.person,
+                            size: 14,
+                            color: Colors.green[600],
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              userName,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),

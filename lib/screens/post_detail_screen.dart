@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/post_model.dart';
 import '../services/post_service.dart';
 
@@ -185,14 +186,29 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(Icons.person, color: Colors.green),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(widget.post.userName),
-                          ),
-                        ],
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(widget.post.userId)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          String userName = widget.post.userName;
+                          
+                          if (snapshot.hasData && snapshot.data!.exists) {
+                            final userData = snapshot.data!.data() as Map<String, dynamic>?;
+                            userName = userData?['name'] ?? widget.post.userName;
+                          }
+
+                          return Row(
+                            children: [
+                              const Icon(Icons.person, color: Colors.green),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(userName),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 8),
                       Row(
