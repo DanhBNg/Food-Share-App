@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 import 'connect_screen.dart';
 
@@ -40,13 +41,25 @@ class MessageScreen extends StatelessWidget {
           });
 
 
-          return ListView.builder(
+          return ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 8),
             itemCount: rooms.length,
+            separatorBuilder: (context, index) => const Divider(height: 1, indent: 72),
             itemBuilder: (context, index) {
               final room = rooms[index].value;
               final members = Map<String, dynamic>.from(room['members']);
               final otherUserId = members.keys
-                  .firstWhere((id) => id != currentUser.uid);
+                  .firstWhere((id) => id != currentUser.uid, orElse: () => '');
+
+              // Bỏ qua nếu không tìm thấy user khác
+              if (otherUserId.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              final lastMessage = room['lastMessage'] ?? '';
+              final lastMessageTime = room['lastMessageTime'] ?? 0;
+              final lastSenderId = room['lastSenderId'] ?? '';
+              final isUnread = lastSenderId != currentUser.uid;
 
               return FutureBuilder<DocumentSnapshot>(
                 future: FirebaseFirestore.instance
@@ -57,7 +70,16 @@ class MessageScreen extends StatelessWidget {
                   String displayName = 'Ẩn danh';
 
                   if (userSnap.connectionState == ConnectionState.waiting) {
-                    displayName = '...';
+                    return const ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      ),
+                      title: Text('...'),
+                    );
                   } else if (userSnap.hasData && userSnap.data!.exists) {
                     final data = userSnap.data!.data() as Map<String, dynamic>?;
                     final name = data?['name'];
@@ -66,24 +88,144 @@ class MessageScreen extends StatelessWidget {
                     }
                   }
 
-                  return Card(
-                    child: ListTile(
-                      title: Text(displayName),
-                      subtitle: Text(room['lastMessage'] ?? ''),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ConnectScreen(
-                              receiverId: otherUserId,
+                  // Format thời gian
+                  String timeText = '';
+                  if (lastMessageTime > 0) {
+                    final dateTime = DateTime.fromMillisecondsSinceEpoch(lastMessageTime);
+                    final now = DateTime.now();
+                    
+                    if (dateTime.year == now.year &&
+                        dateTime.month == now.month &&
+                        dateTime.day == now.day) {
+                      timeText = DateFormat('HH:mm').format(dateTime);
+                    } else {
+                      final difference = now.difference(dateTime);
+                      if (difference.inDays < 7) {
+                        timeText = DateFormat('E', 'vi').format(dateTime);
+                      } else {
+                        timeText = DateFormat('dd/MM').format(dateTime);
+                      }
+                    }
+                  }
+
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ConnectScreen(
+                            receiverId: otherUserId,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 12.0,
+                      ),
+                      child: Row(
+                        children: [
+                          // Avatar
+                          CircleAvatar(
+                            radius: 28,
+                            backgroundColor: Colors.green.shade100,
+                            child: Text(
+                              displayName.isNotEmpty
+                                  ? displayName[0].toUpperCase()
+                                  : 'U',
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        );
-                      },
+                          const SizedBox(width: 12),
+                          
+                          // Nội dung
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        displayName,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: isUnread
+                                              ? FontWeight.bold
+                                              : FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    if (timeText.isNotEmpty)
+                                      Text(
+                                        timeText,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: isUnread
+                                              ? Colors.green.shade700
+                                              : Colors.grey[600],
+                                          fontWeight: isUnread
+                                              ? FontWeight.w600
+                                              : FontWeight.normal,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    if (lastSenderId == currentUser.uid)
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 4),
+                                        child: Icon(
+                                          Icons.done_all,
+                                          size: 16,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    Expanded(
+                                      child: Text(
+                                        lastMessage,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[700],
+                                          fontWeight: isUnread
+                                              ? FontWeight.w500
+                                              : FontWeight.normal,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    if (isUnread)
+                                      Container(
+                                        margin: const EdgeInsets.only(left: 8),
+                                        width: 8,
+                                        height: 8,
+                                        decoration: BoxDecoration(
+                                          color: Colors.green,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },
-
               );
             },
           );
