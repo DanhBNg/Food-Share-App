@@ -1,10 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../utils/chat_utils.dart';
+import '../services/image_upload_service.dart';
 
 class ConnectScreen extends StatefulWidget {
   final String receiverId;
@@ -19,6 +23,8 @@ class _ConnectScreenState extends State<ConnectScreen> {
   final _messageController = TextEditingController();
   late String chatId;
   final currentUser = FirebaseAuth.instance.currentUser!;
+  final _imageService = ImageUploadService();
+  bool _isSending = false;
 
   @override
   void initState() {
@@ -47,31 +53,84 @@ class _ConnectScreenState extends State<ConnectScreen> {
 
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+    await _sendChat(text: text);
+  }
 
+  Future<void> _sendChat({String text = '', String? imageUrl}) async {
+    if (_isSending) return;
+    if (text.isEmpty && (imageUrl == null || imageUrl.isEmpty)) return;
+
+    _isSending = true;
+    try {
+      await _doSend(text: text, imageUrl: imageUrl);
+    } finally {
+      _isSending = false;
+    }
+  }
+
+  Future<void> _doSend({String text = '', String? imageUrl}) async {
     final now = DateTime.now().millisecondsSinceEpoch;
-
-    final msgRef =
-    FirebaseDatabase.instance.ref('messages/$chatId').push();
+    final msgRef = FirebaseDatabase.instance.ref('messages/$chatId').push();
 
     await msgRef.set({
       'senderId': currentUser.uid,
       'receiverId': widget.receiverId,
       'text': text,
-      'imageUrl': null,
+      'imageUrl': imageUrl,
       'createdAt': now, // 🔥 BẮT BUỘC – KHÔNG ĐƯỢC NULL
       'seenBy': {
         currentUser.uid: true,
       },
     });
 
+    final lastMessagePreview =
+        text.isNotEmpty ? text : (imageUrl != null ? '[Ảnh]' : '');
+
     await FirebaseDatabase.instance.ref('chatRooms/$chatId').update({
-      'lastMessage': text,
+      'lastMessage': lastMessagePreview,
       'lastMessageTime': now,
       'lastSenderId': currentUser.uid,
     });
 
     _messageController.clear();
+  }
+
+  Future<void> _pickAndSendImage() async {
+    if (_isSending) return;
+
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+
+    if (image == null) return;
+
+    final Uint8List bytes = await image.readAsBytes();
+    final ext = image.name.split('.').last;
+
+    _isSending = true;
+    try {
+      final imageUrl = await _imageService.uploadPostImage(
+        bytes: bytes,
+        extension: ext,
+      );
+
+      if (imageUrl != null) {
+        await _doSend(
+          text: _messageController.text.trim(),
+          imageUrl: imageUrl,
+        );
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Tải ảnh thất bại, vui lòng thử lại')),
+          );
+        }
+      }
+    } finally {
+      _isSending = false;
+    }
   }
 
   Future<void> _markSeen() async {
@@ -222,14 +281,36 @@ class _ConnectScreenState extends State<ConnectScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // Nội dung tin nhắn
-                                  Text(
-                                    msg['text'] ?? '',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: isMe ? Colors.white : Colors.black87,
+                                  // Ảnh (nếu có)
+                                  if (msg['imageUrl'] != null &&
+                                      (msg['imageUrl'] as String).isNotEmpty)
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.network(
+                                        msg['imageUrl'],
+                                        width: 220,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stack) => Container(
+                                          width: 220,
+                                          height: 180,
+                                          color: Colors.grey[300],
+                                          child: const Icon(Icons.broken_image),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  if ((msg['imageUrl'] != null && (msg['imageUrl'] as String).isNotEmpty) &&
+                                      (msg['text'] as String? ?? '').isNotEmpty)
+                                    const SizedBox(height: 8),
+
+                                  // Nội dung tin nhắn
+                                  if ((msg['text'] as String? ?? '').isNotEmpty)
+                                    Text(
+                                      msg['text'],
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: isMe ? Colors.white : Colors.black87,
+                                      ),
+                                    ),
                                   const SizedBox(height: 6),
 
                                   // Thời gian + trạng thái
@@ -337,6 +418,11 @@ class _ConnectScreenState extends State<ConnectScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
+                  IconButton(
+                    icon: Icon(Icons.photo, color: Colors.green.shade700),
+                    onPressed: _pickAndSendImage,
+                  ),
+                  const SizedBox(width: 4),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.green,
