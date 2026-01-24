@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "459962607492",
+    "firebase_url": "https://food-share-fce9b-default-rtdb.firebaseio.com",
     "project_id": "food-share-fce9b",
     "storage_bucket": "food-share-fce9b.firebasestorage.app"
   },
@@ -12,7 +13,28 @@
           "package_name": "com.example.food_share"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "459962607492-23mr91unjjtat1j7pofg1r4e6bfic80q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.food_share",
+            "certificate_hash": "c0186aa2594cf0eebefa2c0b2fbb3ce5f2a58c11"
+          }
+        },
+        {
+          "client_id": "459962607492-b6nj8ke8n71grg5jinksm5tc1g8kc8em.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.food_share",
+            "certificate_hash": "b482c038e09238fa8c4a92b61f9b788c14fc899b"
+          }
+        },
+        {
+          "client_id": "459962607492-i18g008guounreduavqtd2dsdgk6ueg4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCKZW-qmXBVIDMPMmVyFG-AWr9JI_fO03g"
@@ -20,7 +42,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "459962607492-i18g008guounreduavqtd2dsdgk6ueg4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "459962607492-nqn8hiiarjf1gl1b8k0gbng59o3apija.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.foodShare"
+              }
+            }
+          ]
         }
       }
     }

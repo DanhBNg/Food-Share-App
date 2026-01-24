@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+
+import '../services/image_upload_service.dart'; // 👈 Supabase uploader
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,6 +16,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final user = FirebaseAuth.instance.currentUser;
   final usersRef = FirebaseFirestore.instance.collection('users');
+
+  final _imageUploadService = ImageUploadService(); // 👈 Supabase service
 
   bool isEditing = false;
   bool _didLoad = false;
@@ -33,18 +36,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-
-  Future<String?> uploadAvatar(File image) async {
+  /// Upload avatar bằng Supabase Storage
+  Future<String?> uploadAvatarWithSupabase(File image) async {
     try {
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('avatars')
-          .child('${user!.uid}.jpg');
+      final bytes = await image.readAsBytes();
+      final extension = image.path.split('.').last;
 
-      await ref.putFile(image);
-      return await ref.getDownloadURL();
+      return await _imageUploadService.uploadPostImage(
+        bytes: bytes,
+        extension: extension,
+      );
     } catch (e) {
-      debugPrint('Upload error: $e');
+      debugPrint('Supabase upload error: $e');
       return null;
     }
   }
@@ -53,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String? photoUrl;
 
     if (pickedImage != null) {
-      photoUrl = await uploadAvatar(pickedImage!);
+      photoUrl = await uploadAvatarWithSupabase(pickedImage!);
       if (photoUrl != null) {
         await user!.updatePhotoURL(photoUrl);
         await user!.reload();
@@ -87,7 +90,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Builder(
       builder: (scaffoldContext) => Scaffold(
         backgroundColor: const Color(0xFFF6F6F6),
-        appBar: AppBar(title: const Text('Trang cá nhân'), backgroundColor: Colors.green),
+        appBar: AppBar(
+          title: const Text('Trang cá nhân'),
+          backgroundColor: Colors.green,
+        ),
         body: StreamBuilder<DocumentSnapshot>(
           stream: usersRef.doc(user!.uid).snapshots(),
           builder: (context, snapshot) {
@@ -146,12 +152,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   _buildField('Họ tên', nameCtrl, isEditing),
                   _buildField(
-                      'Email',
-                      TextEditingController(text: user!.email ?? ''),
-                      false),
+                    'Email',
+                    TextEditingController(text: user!.email ?? ''),
+                    false,
+                  ),
                   _buildField('SĐT', phoneCtrl, isEditing),
                   _buildField('Địa chỉ', addressCtrl, isEditing),
-
 
                   const SizedBox(height: 24),
 
@@ -170,22 +176,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
 
                   _buildActionBtn(
-                      'Quản lý bài đăng', Icons.list_alt, Colors.orange, () {
-                    // TODO: chuyển sang màn quản lý bài viết
-                  }),
+                    'Quản lý bài đăng',
+                    Icons.list_alt,
+                    Colors.orange,
+                        () {},
+                  ),
                   const SizedBox(height: 12),
 
-                  _buildActionBtn('Cài đặt', Icons.settings, Colors.purple, () {
-                    // TODO: chuyển sang màn cài đặt
-                  }),
+                  _buildActionBtn(
+                    'Cài đặt',
+                    Icons.settings,
+                    Colors.purple,
+                        () {},
+                  ),
                   const SizedBox(height: 12),
 
-                  _buildActionBtn('Đăng xuất', Icons.logout, Colors.red, () async {
-                    await FirebaseAuth.instance.signOut();
-                    if (!mounted) return;
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/login', (r) => false);
-                  }),
+                  _buildActionBtn(
+                    'Đăng xuất',
+                    Icons.logout,
+                    Colors.red,
+                        () async {
+                      await FirebaseAuth.instance.signOut();
+                      if (!mounted) return;
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/login', (r) => false);
+                    },
+                  ),
                 ],
               ),
             );
