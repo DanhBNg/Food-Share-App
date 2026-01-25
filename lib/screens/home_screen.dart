@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor: const Color(0xFF4F8CFF),
         elevation: 0,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                     child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4F8CFF)),
                     ),
                   );
                 }
@@ -112,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
+        backgroundColor: const Color(0xFF4F8CFF),
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.push(
@@ -173,7 +173,7 @@ class PostCard extends StatelessWidget {
                       Icon(
                         Icons.scale,
                         size: 16,
-                        color: Colors.green[600],
+                        color: const Color(0xFF4F8CFF),
                       ),
                       const SizedBox(width: 4),
                       Expanded(
@@ -196,7 +196,7 @@ class PostCard extends StatelessWidget {
                       Icon(
                         Icons.description,
                         size: 16,
-                        color: Colors.green[600],
+                        color: const Color(0xFF4F8CFF),
                       ),
                       const SizedBox(width: 4),
                       Expanded(
@@ -234,7 +234,7 @@ class PostCard extends StatelessWidget {
                           Icon(
                             Icons.person,
                             size: 14,
-                            color: Colors.green[600],
+                            color: const Color(0xFF4F8CFF),
                           ),
                           const SizedBox(width: 4),
                           Expanded(
@@ -259,7 +259,7 @@ class PostCard extends StatelessWidget {
             // Nút chi tiết bên phải
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF4F8CFF),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,

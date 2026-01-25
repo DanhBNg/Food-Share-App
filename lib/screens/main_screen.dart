@@ -28,7 +28,7 @@ class _MainScreenState extends State<MainScreen> {
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        selectedItemColor: Colors.green,
+         selectedItemColor: const Color(0xFF4F8CFF),
         unselectedItemColor: Colors.grey,
         onTap: (index) {
           setState(() {

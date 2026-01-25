@@ -117,7 +117,7 @@ class _PostScreenState extends State<PostScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Đăng bài thành công!'),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF4F8CFF),
           ),
         );
         Navigator.of(context).pop();
@@ -159,7 +159,7 @@ class _PostScreenState extends State<PostScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Đăng bài chia sẻ'),
-        backgroundColor: Colors.green,
+        backgroundColor: const Color(0xFF4F8CFF),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
@@ -168,11 +168,11 @@ class _PostScreenState extends State<PostScreen> {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: const Color(0xFF4F8CFF),
             ),
             onPressed: _submitPost,
             child: _isLoading
-                ? const CircularProgressIndicator(color: Colors.green)
+              ? const CircularProgressIndicator(color: Color(0xFF4F8CFF))
                 : const Text('Đăng bài',
                             style: TextStyle(
                               fontSize: 16,
@@ -270,14 +270,14 @@ class _PostScreenState extends State<PostScreen> {
                     height: 160,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green),
+                      border: Border.all(color: Color(0xFF4F8CFF)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: _imageBytes == null
                         ? const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.image, size: 40, color: Colors.green),
+                        Icon(Icons.image, size: 40, color: Color(0xFF4F8CFF)),
                         SizedBox(height: 8),
                         Text('Chọn ảnh sản phẩm'),
                       ],
