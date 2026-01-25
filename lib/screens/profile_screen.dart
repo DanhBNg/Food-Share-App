@@ -90,9 +90,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Builder(
       builder: (scaffoldContext) => Scaffold(
         backgroundColor: const Color(0xFFF6F6F6),
-        appBar: AppBar(
-          title: const Text('Trang cá nhân'),
-          backgroundColor: Colors.green,
+            appBar: AppBar(
+              title: const Text('Trang cá nhân'),
+              backgroundColor: const Color(0xFF4F8CFF),
         ),
         body: StreamBuilder<DocumentSnapshot>(
           stream: usersRef.doc(user!.uid).snapshots(),
@@ -164,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionBtn(
                     isEditing ? 'Lưu thông tin' : 'Chỉnh sửa',
                     isEditing ? Icons.save : Icons.edit,
-                    isEditing ? Colors.green : Colors.blue,
+                      isEditing ? const Color(0xFF4F8CFF) : Colors.blue,
                         () {
                       if (isEditing) {
                         saveProfile(scaffoldContext);

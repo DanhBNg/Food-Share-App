@@ -16,7 +16,7 @@ class MessageScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tin nhắn'),
-        backgroundColor: Colors.green,
+        backgroundColor: const Color(0xFF4F8CFF),
       ),
       body: StreamBuilder(
         stream: FirebaseDatabase.instance
@@ -129,13 +129,13 @@ class MessageScreen extends StatelessWidget {
                           // Avatar
                           CircleAvatar(
                             radius: 28,
-                            backgroundColor: Colors.green.shade100,
+                            backgroundColor: const Color(0xFF4F8CFF).withOpacity(0.15),
                             child: Text(
                               displayName.isNotEmpty
                                   ? displayName[0].toUpperCase()
                                   : 'U',
-                              style: TextStyle(
-                                color: Colors.green.shade700,
+                              style: const TextStyle(
+                                color: Color(0xFF4F8CFF),
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -170,9 +170,9 @@ class MessageScreen extends StatelessWidget {
                                         timeText,
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: isUnread
-                                              ? Colors.green.shade700
-                                              : Colors.grey[600],
+                                              color: isUnread
+                                                ? const Color(0xFF4F8CFF)
+                                                : Colors.grey[600],
                                           fontWeight: isUnread
                                               ? FontWeight.w600
                                               : FontWeight.normal,
@@ -212,7 +212,7 @@ class MessageScreen extends StatelessWidget {
                                         width: 8,
                                         height: 8,
                                         decoration: BoxDecoration(
-                                          color: Colors.green,
+                                          color: const Color(0xFF4F8CFF),
                                           shape: BoxShape.circle,
                                         ),
                                       ),

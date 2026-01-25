@@ -25,7 +25,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chi tiết sản phẩm'),
-        backgroundColor: Colors.green,
+          backgroundColor: const Color(0xFF4F8CFF),
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
@@ -35,7 +35,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                  backgroundColor: const Color(0xFF4F8CFF),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -85,7 +85,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       // Tên nguyên liệu
                       Row(
                         children: [
-                          const Icon(Icons.restaurant, color: Colors.green),
+                          const Icon(Icons.restaurant, color: Color(0xFF4F8CFF)),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
@@ -117,7 +117,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       // Số lượng
                       Row(
                         children: [
-                          const Icon(Icons.scale, color: Colors.green),
+                          const Icon(Icons.scale, color: Color(0xFF4F8CFF)),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
@@ -149,7 +149,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       // Khu vực
                       Row(
                         children: [
-                          const Icon(Icons.location_on, color: Colors.green),
+                          const Icon(Icons.location_on, color: Color(0xFF4F8CFF)),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Column(
@@ -241,7 +241,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
                           return Row(
                             children: [
-                              const Icon(Icons.person, color: Colors.green),
+                              const Icon(Icons.person, color: Color(0xFF4F8CFF)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(userName),
@@ -253,7 +253,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          const Icon(Icons.access_time, color: Colors.green),
+                          const Icon(Icons.access_time, color: Color(0xFF4F8CFF)),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -284,7 +284,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           height: 220,
                           alignment: Alignment.center,
                           child: const CircularProgressIndicator(
-                            color: Colors.green,
+                            color: Color(0xFF4F8CFF),
                           ),
                         );
                       },
