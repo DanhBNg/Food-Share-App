@@ -108,6 +108,9 @@ class MessageScreen extends StatelessWidget {
                     }
                   }
 
+                  final photoUrl = (userSnap.data?.data() as Map<String, dynamic>?)?['photo'] as String?;
+                  final hasPhoto = photoUrl != null && photoUrl.trim().isNotEmpty;
+
                   return InkWell(
                     onTap: () {
                       Navigator.push(
@@ -127,20 +130,19 @@ class MessageScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           // Avatar
-                          CircleAvatar(
-                            radius: 28,
-                            backgroundColor: const Color(0xFF4F8CFF).withOpacity(0.15),
-                            child: Text(
-                              displayName.isNotEmpty
-                                  ? displayName[0].toUpperCase()
-                                  : 'U',
-                              style: const TextStyle(
-                                color: Color(0xFF4F8CFF),
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          hasPhoto
+                              ? ClipOval(
+                                  child: Image.network(
+                                    photoUrl!,
+                                    width: 56,
+                                    height: 56,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return _InitialAvatar(displayName: displayName);
+                                    },
+                                  ),
+                                )
+                              : _InitialAvatar(displayName: displayName),
                           const SizedBox(width: 12),
                           
                           // Nội dung
@@ -230,6 +232,29 @@ class MessageScreen extends StatelessWidget {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class _InitialAvatar extends StatelessWidget {
+  final String displayName;
+  const _InitialAvatar({required this.displayName});
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      radius: 28,
+      backgroundColor: const Color(0xFF4F8CFF).withOpacity(0.15),
+      child: Text(
+        displayName.isNotEmpty
+            ? displayName[0].toUpperCase()
+            : 'U',
+        style: const TextStyle(
+          color: Color(0xFF4F8CFF),
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
