@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:typed_data';
+import '../services/image_upload_service.dart';
 import '../services/post_service.dart';
 
 class PostScreen extends StatefulWidget {
@@ -18,6 +22,10 @@ class _PostScreenState extends State<PostScreen> {
 
   final _addressController = TextEditingController();
   final _descriptionController = TextEditingController();
+  Uint8List? _imageBytes;
+  String? _imageExtension;
+  final _imageService = ImageUploadService();
+
   final _postService = PostService();
   bool _isLoading = false;
 
@@ -56,8 +64,30 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      setState(() {
+        _imageBytes = bytes;
+        _imageExtension = image.name.split('.').last;
+      });
+    }
+  }
 
   Future<void> _submitPost() async {
+    String? imageUrl;
+
+    if (_imageBytes != null && _imageExtension != null) {
+      imageUrl = await _imageService.uploadPostImage(
+        bytes: _imageBytes!,
+        extension: _imageExtension!,
+      );
+    }
+    if (_isLoading) return; // chặn spam click
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -78,10 +108,9 @@ class _PostScreenState extends State<PostScreen> {
       await _postService.createPost(
         ingredientName: _ingredientController.text.trim(),
         quantity: _quantityController.text.trim(),
-        //region: _regionController.text.trim(),
         address: _addressController.text.trim(),
         description: _descriptionController.text.trim(),
-        //userName: currentUser.displayName ?? currentUser.email ?? 'Ẩn danh',
+        imageUrl: imageUrl,
       );
 
       if (mounted) {
@@ -106,12 +135,53 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+// up anh
+  Future<String?> _uploadImageToSupabase(File image) async {
+    final supabase = Supabase.instance.client;
+
+    final fileName =
+        '${DateTime.now().millisecondsSinceEpoch}.jpg';
+
+    await supabase.storage
+        .from('post-images')
+        .upload(fileName, image);
+
+    final publicUrl = supabase.storage
+        .from('post-images')
+        .getPublicUrl(fileName);
+
+    return publicUrl;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Đăng bài chia sẻ'),
         backgroundColor: Colors.green,
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SizedBox(
+          height: 50,
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+            ),
+            onPressed: _submitPost,
+            child: _isLoading
+                ? const CircularProgressIndicator(color: Colors.green)
+                : const Text('Đăng bài',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -173,33 +243,7 @@ class _PostScreenState extends State<PostScreen> {
                     return null;
                   },
                 ),
-                // DropdownButtonFormField<String>(
-                //   decoration: InputDecoration(
-                //     labelText: 'Khu vực / Tỉnh *',
-                //     border: OutlineInputBorder(
-                //       borderRadius: BorderRadius.circular(8),
-                //     ),
-                //     prefixIcon: const Icon(Icons.location_on),
-                //   ),
-                //   value: _regionController.text.isEmpty ? null : _regionController.text,
-                //   items: regions
-                //       .map((region) => DropdownMenuItem(
-                //             value: region,
-                //             child: Text(region),
-                //           ))
-                //       .toList(),
-                //   onChanged: (value) {
-                //     if (value != null) {
-                //       _regionController.text = value;
-                //     }
-                //   },
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Vui lòng chọn khu vực';
-                //     }
-                //     return null;
-                //   },
-                // ),
+
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _descriptionController,
@@ -219,38 +263,68 @@ class _PostScreenState extends State<PostScreen> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    height: 160,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: _imageBytes == null
+                        ? const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.image, size: 40, color: Colors.green),
+                        SizedBox(height: 8),
+                        Text('Chọn ảnh sản phẩm'),
+                      ],
+                    )
+                        : ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.memory(
+                        _imageBytes!,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                    onPressed: _isLoading ? null : _submitPost,
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text(
-                            'Đăng bài',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
                   ),
-                )
+                ),
+
+                const SizedBox(height: 16),
+
+                // SizedBox(
+                //   width: double.infinity,
+                //   height: 50,
+                //   child: ElevatedButton(
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.green,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(8),
+                //       ),
+                //     ),
+                //     onPressed: _isLoading ? null : _submitPost,
+                //     child: _isLoading
+                //         ? const SizedBox(
+                //             height: 24,
+                //             width: 24,
+                //             child: CircularProgressIndicator(
+                //               valueColor:
+                //                   AlwaysStoppedAnimation<Color>(Colors.white),
+                //               strokeWidth: 2,
+                //             ),
+                //           )
+                //         : const Text(
+                //             'Đăng bài',
+                //             style: TextStyle(
+                //               fontSize: 16,
+                //               fontWeight: FontWeight.bold,
+                //               color: Colors.white,
+                //             ),
+                //           ),
+                //   ),
+                // )
               ],
             ),
           ),
