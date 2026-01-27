@@ -91,8 +91,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (scaffoldContext) => Scaffold(
         backgroundColor: const Color(0xFFF6F6F6),
             appBar: AppBar(
-              title: const Text('Trang cá nhân'),
-              backgroundColor: const Color(0xFF4F8CFF),
+              title: const Text('Trang cá nhân',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF1976D2),
+                      Color(0xFFFBC2EB),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
         ),
         body: StreamBuilder<DocumentSnapshot>(
           stream: usersRef.doc(user!.uid).snapshots(),

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:typed_data';
 import '../services/image_upload_service.dart';
 import '../services/post_service.dart';
@@ -135,31 +133,30 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
-// up anh
-  Future<String?> _uploadImageToSupabase(File image) async {
-    final supabase = Supabase.instance.client;
-
-    final fileName =
-        '${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-    await supabase.storage
-        .from('post-images')
-        .upload(fileName, image);
-
-    final publicUrl = supabase.storage
-        .from('post-images')
-        .getPublicUrl(fileName);
-
-    return publicUrl;
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Đăng bài chia sẻ'),
-        backgroundColor: const Color(0xFF4F8CFF),
+        title: const Text('Đăng bài chia sẻ',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF1976D2),
+                Color(0xFFFBC2EB),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),

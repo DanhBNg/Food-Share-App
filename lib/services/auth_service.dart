@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -49,6 +50,7 @@ class AuthService {
       );
 
       final result = await _auth.signInWithCredential(credential);
+
       return result.user;
     } catch (e) {
       print('Google login error: $e');
