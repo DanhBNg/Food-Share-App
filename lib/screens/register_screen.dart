@@ -47,8 +47,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color(0xFF6EC6FF),
-              Color(0xFFFFC1CC),
+              Color(0xFF1976D2),
+              Color(0xFFFBC2EB),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -63,20 +63,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 40),
 
                 // LOGO
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.restaurant,
-                    size: 64,
-                    color: Colors.blueAccent,
-                  ),
+                Image.asset(
+                  'assets/images/Logo.png',
+                  width: 300,
+                  height: 300,
+                  fit: BoxFit.contain,
                 ),
-
-                const SizedBox(height: 20),
 
                 const Text(
                   'Food Share',

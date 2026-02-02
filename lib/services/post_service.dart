@@ -11,6 +11,8 @@ class PostService {
 
   // ================== CREATE POST ==================
   Future<void> createPost({
+    required String price,
+    required String productUrl,
     required String ingredientName,
     required String quantity,
     required String description,
@@ -30,6 +32,8 @@ class PostService {
       await _postsRef.add({
         'userId': user.uid,
         'userName': userName,
+        'price': price,
+        'productUrl': productUrl,
         'ingredientName': ingredientName,
         'ingredientNameLower': ingredientName.toLowerCase(),
         'quantity': quantity,

@@ -90,9 +90,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Builder(
       builder: (scaffoldContext) => Scaffold(
         backgroundColor: const Color(0xFFF6F6F6),
-        appBar: AppBar(
-          title: const Text('Trang cá nhân'),
-          backgroundColor: Colors.green,
+            appBar: AppBar(
+              title: const Text('Trang cá nhân',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF1976D2),
+                      Color(0xFFFBC2EB),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
         ),
         body: StreamBuilder<DocumentSnapshot>(
           stream: usersRef.doc(user!.uid).snapshots(),
@@ -164,7 +182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildActionBtn(
                     isEditing ? 'Lưu thông tin' : 'Chỉnh sửa',
                     isEditing ? Icons.save : Icons.edit,
-                    isEditing ? Colors.green : Colors.blue,
+                      isEditing ? const Color(0xFF4F8CFF) : Colors.blue,
                         () {
                       if (isEditing) {
                         saveProfile(scaffoldContext);
@@ -180,6 +198,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.list_alt,
                     Colors.orange,
                         () {},
+                  ),
+                  const SizedBox(height: 12),
+
+                  _buildActionBtn(
+                    'Mua gói đăng tin',
+                    Icons.workspace_premium,
+                    Colors.teal,
+                        () {
+                    },
                   ),
                   const SizedBox(height: 12),
 

@@ -53,8 +53,26 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tìm kiếm'),
-        backgroundColor: Colors.green,
+        title: const Text('Tìm kiếm',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF1976D2),
+                Color(0xFFFBC2EB),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Column(
         children: [
@@ -82,7 +100,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   height: 48,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: const Color(0xFF4F8CFF),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -176,7 +194,7 @@ class _PostCard extends StatelessWidget {
 
                   Row(
                     children: [
-                      Icon(Icons.scale, size: 16, color: Colors.green[600]),
+                      const Icon(Icons.scale, size: 16, color: Color(0xFF4F8CFF)),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
@@ -191,7 +209,7 @@ class _PostCard extends StatelessWidget {
 
                   Row(
                     children: [
-                      Icon(Icons.description, size: 16, color: Colors.green[600]),
+                      const Icon(Icons.description, size: 16, color: Color(0xFF4F8CFF)),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
@@ -224,7 +242,7 @@ class _PostCard extends StatelessWidget {
 
                       return Row(
                         children: [
-                          Icon(Icons.person, size: 14, color: Colors.green[600]),
+                          const Icon(Icons.person, size: 14, color: Color(0xFF4F8CFF)),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
@@ -249,7 +267,7 @@ class _PostCard extends StatelessWidget {
 
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: const Color(0xFF4F8CFF),
                 foregroundColor: Colors.white,
                 padding:
                 const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

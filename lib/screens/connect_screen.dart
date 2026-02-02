@@ -1,3 +1,4 @@
+
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -148,7 +149,19 @@ class _ConnectScreenState extends State<ConnectScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF1976D2),
+                Color(0xFFFBC2EB),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         title: FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance
               .collection('users')
@@ -167,6 +180,11 @@ class _ConnectScreenState extends State<ConnectScreen> {
 
             final name = data?['name'];
             return Text(
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
               (name != null && name.toString().trim().isNotEmpty)
                   ? name
                   : 'Ẩn danh',
@@ -261,8 +279,8 @@ class _ConnectScreenState extends State<ConnectScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: isMe
-                                    ? Colors.green
-                                    : Colors.grey[200],
+                                  ? const Color(0xFF4F8CFF)
+                                  : Colors.grey[200],
                                 borderRadius: BorderRadius.only(
                                   topLeft: const Radius.circular(16),
                                   topRight: const Radius.circular(16),
@@ -357,13 +375,13 @@ class _ConnectScreenState extends State<ConnectScreen> {
                                 }
                                 return CircleAvatar(
                                   radius: 14,
-                                  backgroundColor: Colors.green.withOpacity(0.15),
+                                  backgroundColor: const Color(0xFF4F8CFF).withOpacity(0.15),
                                   child: Text(
                                     displayName.isNotEmpty
                                         ? displayName[0].toUpperCase()
                                         : 'M',
                                     style: TextStyle(
-                                      color: Colors.green.shade700,
+                                      color: const Color(0xFF4F8CFF),
                                       fontSize: 11,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -419,13 +437,13 @@ class _ConnectScreenState extends State<ConnectScreen> {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: Icon(Icons.photo, color: Colors.green.shade700),
+                    icon: const Icon(Icons.photo, color: Color(0xFF4F8CFF)),
                     onPressed: _pickAndSendImage,
                   ),
                   const SizedBox(width: 4),
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.green,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF4F8CFF),
                       shape: BoxShape.circle,
                     ),
                     child: IconButton(

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'dart:typed_data';
 import '../services/image_upload_service.dart';
 import '../services/post_service.dart';
@@ -17,9 +15,10 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   final _formKey = GlobalKey<FormState>();
+  final  _priceController = TextEditingController();
+  final  _urlController = TextEditingController();
   final _ingredientController = TextEditingController();
   final _quantityController = TextEditingController();
-
   final _addressController = TextEditingController();
   final _descriptionController = TextEditingController();
   Uint8List? _imageBytes;
@@ -38,6 +37,8 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   void dispose() {
+    _priceController.dispose();
+    _urlController.dispose();
     _ingredientController.dispose();
     _quantityController.dispose();
     _addressController.dispose();
@@ -106,6 +107,8 @@ class _PostScreenState extends State<PostScreen> {
       }
 
       await _postService.createPost(
+        price: _priceController.text.trim(),
+        productUrl: _urlController.text.trim(),
         ingredientName: _ingredientController.text.trim(),
         quantity: _quantityController.text.trim(),
         address: _addressController.text.trim(),
@@ -117,7 +120,7 @@ class _PostScreenState extends State<PostScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Đăng bài thành công!'),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF4F8CFF),
           ),
         );
         Navigator.of(context).pop();
@@ -135,31 +138,30 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
-// up anh
-  Future<String?> _uploadImageToSupabase(File image) async {
-    final supabase = Supabase.instance.client;
-
-    final fileName =
-        '${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-    await supabase.storage
-        .from('post-images')
-        .upload(fileName, image);
-
-    final publicUrl = supabase.storage
-        .from('post-images')
-        .getPublicUrl(fileName);
-
-    return publicUrl;
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Đăng bài chia sẻ'),
-        backgroundColor: Colors.green,
+        title: const Text('Đăng bài chia sẻ',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF1976D2),
+                Color(0xFFFBC2EB),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
@@ -168,11 +170,11 @@ class _PostScreenState extends State<PostScreen> {
           width: double.infinity,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: const Color(0xFF4F8CFF),
             ),
             onPressed: _submitPost,
             child: _isLoading
-                ? const CircularProgressIndicator(color: Colors.green)
+              ? const CircularProgressIndicator(color: Color(0xFF4F8CFF))
                 : const Text('Đăng bài',
                             style: TextStyle(
                               fontSize: 16,
@@ -226,22 +228,54 @@ class _PostScreenState extends State<PostScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
+                //price
+                TextFormField(
+                  controller: _priceController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'Giá (VNĐ) *',
+                    hintText: 'Ví dụ: 50000 hoặc 0 nếu tặng',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    prefixIcon: const Icon(Icons.attach_money),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Vui lòng nhập giá';
+                    }
+                    if (int.tryParse(value.trim()) == null) {
+                      return 'Giá phải là số';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                //url
+                TextFormField(
+                  controller: _urlController,
+                  decoration: InputDecoration(
+                    labelText: 'Gắn link sản phẩm tại đây nếu bạn muốn chia sẻ nhanh thông tin ở nền tảng khác',
+                    hintText: 'URL sản phẩm',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    prefixIcon: const Icon(Icons.link),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _addressController,
                   decoration: InputDecoration(
-                    labelText: 'Địa chỉ *',
+                    labelText: 'Địa chỉ',
                     hintText: 'VD: 123 Lê Lợi, Quận 1, TP.HCM',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
                     prefixIcon: const Icon(Icons.place),
                   ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Vui lòng nhập địa chỉ';
-                    }
-                    return null;
-                  },
                 ),
 
                 const SizedBox(height: 16),
@@ -270,14 +304,14 @@ class _PostScreenState extends State<PostScreen> {
                     height: 160,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.green),
+                      border: Border.all(color: Color(0xFF4F8CFF)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: _imageBytes == null
                         ? const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.image, size: 40, color: Colors.green),
+                        Icon(Icons.image, size: 40, color: Color(0xFF4F8CFF)),
                         SizedBox(height: 8),
                         Text('Chọn ảnh sản phẩm'),
                       ],
@@ -293,38 +327,6 @@ class _PostScreenState extends State<PostScreen> {
                 ),
 
                 const SizedBox(height: 16),
-
-                // SizedBox(
-                //   width: double.infinity,
-                //   height: 50,
-                //   child: ElevatedButton(
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: Colors.green,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(8),
-                //       ),
-                //     ),
-                //     onPressed: _isLoading ? null : _submitPost,
-                //     child: _isLoading
-                //         ? const SizedBox(
-                //             height: 24,
-                //             width: 24,
-                //             child: CircularProgressIndicator(
-                //               valueColor:
-                //                   AlwaysStoppedAnimation<Color>(Colors.white),
-                //               strokeWidth: 2,
-                //             ),
-                //           )
-                //         : const Text(
-                //             'Đăng bài',
-                //             style: TextStyle(
-                //               fontSize: 16,
-                //               fontWeight: FontWeight.bold,
-                //               color: Colors.white,
-                //             ),
-                //           ),
-                //   ),
-                // )
               ],
             ),
           ),

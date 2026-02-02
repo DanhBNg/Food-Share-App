@@ -15,8 +15,26 @@ class MessageScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tin nhắn'),
-        backgroundColor: Colors.green,
+        title: const Text('Tin nhắn',
+          style: TextStyle(
+          color: Colors.white,
+            fontSize: 18,
+          fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(0xFF1976D2),
+                Color(0xFFFBC2EB),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: StreamBuilder(
         stream: FirebaseDatabase.instance
@@ -108,6 +126,9 @@ class MessageScreen extends StatelessWidget {
                     }
                   }
 
+                  final photoUrl = (userSnap.data?.data() as Map<String, dynamic>?)?['photo'] as String?;
+                  final hasPhoto = photoUrl != null && photoUrl.trim().isNotEmpty;
+
                   return InkWell(
                     onTap: () {
                       Navigator.push(
@@ -127,20 +148,19 @@ class MessageScreen extends StatelessWidget {
                       child: Row(
                         children: [
                           // Avatar
-                          CircleAvatar(
-                            radius: 28,
-                            backgroundColor: Colors.green.shade100,
-                            child: Text(
-                              displayName.isNotEmpty
-                                  ? displayName[0].toUpperCase()
-                                  : 'U',
-                              style: TextStyle(
-                                color: Colors.green.shade700,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                          hasPhoto
+                              ? ClipOval(
+                                  child: Image.network(
+                                    photoUrl!,
+                                    width: 56,
+                                    height: 56,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return _InitialAvatar(displayName: displayName);
+                                    },
+                                  ),
+                                )
+                              : _InitialAvatar(displayName: displayName),
                           const SizedBox(width: 12),
                           
                           // Nội dung
@@ -170,9 +190,9 @@ class MessageScreen extends StatelessWidget {
                                         timeText,
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: isUnread
-                                              ? Colors.green.shade700
-                                              : Colors.grey[600],
+                                              color: isUnread
+                                                ? const Color(0xFF4F8CFF)
+                                                : Colors.grey[600],
                                           fontWeight: isUnread
                                               ? FontWeight.w600
                                               : FontWeight.normal,
@@ -212,7 +232,7 @@ class MessageScreen extends StatelessWidget {
                                         width: 8,
                                         height: 8,
                                         decoration: BoxDecoration(
-                                          color: Colors.green,
+                                          color: const Color(0xFF4F8CFF),
                                           shape: BoxShape.circle,
                                         ),
                                       ),
@@ -230,6 +250,29 @@ class MessageScreen extends StatelessWidget {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class _InitialAvatar extends StatelessWidget {
+  final String displayName;
+  const _InitialAvatar({required this.displayName});
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      radius: 28,
+      backgroundColor: const Color(0xFF4F8CFF).withOpacity(0.15),
+      child: Text(
+        displayName.isNotEmpty
+            ? displayName[0].toUpperCase()
+            : 'U',
+        style: const TextStyle(
+          color: Color(0xFF4F8CFF),
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

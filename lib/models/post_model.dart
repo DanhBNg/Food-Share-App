@@ -4,6 +4,8 @@ class Post {
   final String id;
   final String userId;
   final String userName;
+  final String price;
+  final String productUrl;
   final String ingredientName;
   final String ingredientNameLower;
   final String quantity;
@@ -16,6 +18,8 @@ class Post {
     required this.id,
     required this.userId,
     required this.userName,
+    required this.price,
+    required this.productUrl,
     required this.ingredientName,
     required this.ingredientNameLower,
     required this.quantity,
@@ -32,6 +36,8 @@ class Post {
       id: doc.id,
       userId: data['userId'] ?? '',
       userName: data['userName'] ?? 'Ẩn danh',
+      price: data['price'] ?? '',
+      productUrl: data['productUrl'] ?? '',
       ingredientName: data['ingredientName'] ?? '',
       ingredientNameLower: data['ingredientNameLower'] ?? '',
       quantity: data['quantity'] ?? '',
@@ -46,6 +52,8 @@ class Post {
     return {
       'userId': userId,
       'userName': userName,
+      'price': price,
+      'productUrl': productUrl,
       'ingredientName': ingredientName,
       'ingredientNameLower': ingredientName.toLowerCase(),
       'quantity': quantity,
