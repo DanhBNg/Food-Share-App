@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'post_screen.dart';
 import 'post_detail_screen.dart';
 import '../models/post_model.dart';
@@ -15,8 +16,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final PostService _postService = PostService();
   //String _selectedRegion = '';
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               'Nơi kết nối cộng đồng, giao lưu và chia sẻ nguyên liệu thực phẩm',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: 13,
                 fontWeight: FontWeight.w400,
                 color: Colors.white70,
               ),
@@ -185,7 +184,7 @@ class PostCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.scale,
-                        size: 16,
+                        size: 14,
                         color: const Color(0xFF4F8CFF),
                       ),
                       const SizedBox(width: 4),
@@ -203,25 +202,23 @@ class PostCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  // Mô tả
+                  // price
                   Row(
                     children: [
                       Icon(
-                        Icons.description,
-                        size: 16,
+                        Icons.attach_money,
+                        size: 15,
                         color: const Color(0xFF4F8CFF),
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          post.description.isEmpty
-                              ? 'Không có mô tả'
-                              : post.description,
+                          'Giá: ${formatPrice(post.price)}',
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 13,
                             color: Colors.grey,
                           ),
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -246,7 +243,7 @@ class PostCard extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.person,
-                            size: 14,
+                            size: 15,
                             color: const Color(0xFF4F8CFF),
                           ),
                           const SizedBox(width: 4),
@@ -254,7 +251,7 @@ class PostCard extends StatelessWidget {
                             child: Text(
                               userName,
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 13,
                                 color: Colors.grey,
                               ),
                               maxLines: 1,
@@ -295,5 +292,19 @@ class PostCard extends StatelessWidget {
         ),
       ),
     );
+  }
+  String formatPrice(String price) {
+    final p = price.trim().toLowerCase();
+
+    if (p == '0' || p == 'miễn phí' || p == 'free') {
+      return 'Tặng miễn phí';
+    }
+    // Nếu là số, format có dấu chấm
+    final number = int.tryParse(p.replaceAll(RegExp(r'[^0-9]'), ''));
+    if (number != null) {
+      final formatter = NumberFormat("#,###", "vi_VN");
+      return "${formatter.format(number)} đ";
+    }
+    return price;
   }
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_share/screens/connect_screen.dart';
 import '../models/post_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:intl/intl.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final Post post;
@@ -49,38 +51,54 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           child: SizedBox(
             height: 52,
             width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4F8CFF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              onPressed: () {
+            child: Builder(
+              builder: (context) {
                 final currentUser = FirebaseAuth.instance.currentUser;
-                if (currentUser == null) return;
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ConnectScreen(
-                      receiverId: widget.post.userId,
+                final isMyPost =
+                    currentUser != null && currentUser.uid == widget.post.userId;
+
+                return ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isMyPost
+                        ? Colors.grey        // nút xám khi là bài của mình
+                        : const Color(0xFF4F8CFF),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+
+                  // 👇 vô hiệu hóa nếu là bài của mình
+                  onPressed: isMyPost
+                      ? null
+                      : () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ConnectScreen(
+                          receiverId: widget.post.userId,
+                        ),
+                      ),
+                    );
+                  },
+
+                  child: Text(
+                    isMyPost
+                        ? 'Đây là bài đăng của bạn'
+                        : 'Liên hệ người đăng',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
                 );
               },
-              child: const Text(
-                'Liên hệ người đăng',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
             ),
           ),
         ),
       ),
+
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -161,7 +179,37 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       const SizedBox(height: 16),
                       const Divider(),
                       const SizedBox(height: 16),
-
+                      //price
+                      Row(
+                        children: [
+                          const Icon(Icons.attach_money, color: Color(0xFF4F8CFF)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Giá',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                Text(
+                                  formatPrice(widget.post.price),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 16),
                       // Khu vực
                       Row(
                         children: [
@@ -195,33 +243,95 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+              //url
+              if (widget.post.productUrl != null &&
+                  widget.post.productUrl!.isNotEmpty)
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'URL sản phẩm',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(Icons.link, color: Color(0xFF4F8CFF)),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () => openUrl(widget.post.productUrl!),
+                              child: Text(
+                                widget.post.productUrl!,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.blue,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 16),
 
               // Mô tả
-              const Text(
-                'Mô tả chi tiết',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey[50],
-                ),
-                child: Text(
-                  widget.post.description,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    height: 1.6,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Mô tả chi tiết',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(Icons.description, color: Color(0xFF4F8CFF)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              widget.post.description.isNotEmpty
+                                  ? widget.post.description
+                                  : 'Không có mô tả',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                height: 1.6,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
               const SizedBox(height: 16),
+
 
               // Thông tin người đăng
               Card(
@@ -319,35 +429,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ),
                   ),
                 ),
-
-              // // Nút liên hệ
-              // SizedBox(
-              //   width: double.infinity,
-              //   height: 50,
-              //   child: ElevatedButton(
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.green,
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(8),
-              //       ),
-              //     ),
-              //     onPressed: () {
-              //       ScaffoldMessenger.of(context).showSnackBar(
-              //         const SnackBar(
-              //           content: Text('Tính năng liên hệ đang phát triển'),
-              //         ),
-              //       );
-              //     },
-              //     child: const Text(
-              //       'Liên hệ người đăng',
-              //       style: TextStyle(
-              //         fontSize: 16,
-              //         fontWeight: FontWeight.bold,
-              //         color: Colors.white,
-              //       ),
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -358,7 +439,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   String _formatDate(DateTime dateTime) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
-
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
         return '${difference.inMinutes} phút trước';
@@ -372,4 +452,35 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
     }
   }
+  String formatPrice(String price) {
+    final p = price.trim().toLowerCase();
+
+    if (p == '0' || p == 'miễn phí' || p == 'free') {
+      return 'Tặng miễn phí';
+    }
+    // Nếu là số, format có dấu chấm
+    final number = int.tryParse(p.replaceAll(RegExp(r'[^0-9]'), ''));
+    if (number != null) {
+      final formatter = NumberFormat("#,###", "vi_VN");
+      return "${formatter.format(number)} đ";
+    }
+    return price;
+  }
+
+  Future<void> openUrl(String url) async {
+    if (!url.startsWith('http')) {
+      url = 'https://$url';
+    }
+
+    final uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Không mở được liên kết')),
+      );
+    }
+  }
+
 }

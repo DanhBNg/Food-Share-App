@@ -202,6 +202,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
 
                   _buildActionBtn(
+                    'Mua gói đăng tin',
+                    Icons.workspace_premium,
+                    Colors.teal,
+                        () {
+                    },
+                  ),
+                  const SizedBox(height: 12),
+
+                  _buildActionBtn(
                     'Cài đặt',
                     Icons.settings,
                     Colors.purple,

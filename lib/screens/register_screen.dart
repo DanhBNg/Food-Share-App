@@ -63,20 +63,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 40),
 
                 // LOGO
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Icon(
-                    Icons.restaurant,
-                    size: 64,
-                    color: Colors.blueAccent,
-                  ),
+                Image.asset(
+                  'assets/images/Logo.png',
+                  width: 300,
+                  height: 300,
+                  fit: BoxFit.contain,
                 ),
-
-                const SizedBox(height: 20),
 
                 const Text(
                   'Food Share',
