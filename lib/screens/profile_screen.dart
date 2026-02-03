@@ -197,7 +197,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'Quản lý bài đăng',
                     Icons.list_alt,
                     Colors.orange,
-                        () {},
+                        () {
+                      Navigator.pushNamed(context, '/manage_posts');
+                    },
                   ),
                   const SizedBox(height: 12),
 
