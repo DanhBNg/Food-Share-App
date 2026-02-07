@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../services/image_upload_service.dart'; // 👈 Supabase uploader
-
+import '../services/image_upload_service.dart';
+import 'buy_package_screen.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -17,7 +17,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final user = FirebaseAuth.instance.currentUser;
   final usersRef = FirebaseFirestore.instance.collection('users');
 
-  final _imageUploadService = ImageUploadService(); // 👈 Supabase service
+  final _imageUploadService = ImageUploadService(); // Supabase service
 
   bool isEditing = false;
   bool _didLoad = false;
@@ -98,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+              backgroundColor: Colors.transparent,
               flexibleSpace: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
@@ -174,7 +174,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     TextEditingController(text: user!.email ?? ''),
                     false,
                   ),
-                  _buildField('SĐT', phoneCtrl, isEditing),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: IntlPhoneField(
+                      controller: phoneCtrl,
+                      enabled: isEditing,
+                      initialCountryCode: 'VN', // 🇻🇳 mặc định Việt Nam
+                      decoration: InputDecoration(
+                        labelText: 'SĐT',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onChanged: (phone) {
+                        // phone.completeNumber = +8490xxxxxx
+                        phoneCtrl.text = phone.completeNumber;
+                      },
+                    ),
+                  ),
                   _buildField('Địa chỉ', addressCtrl, isEditing),
 
                   const SizedBox(height: 24),
@@ -208,6 +225,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.workspace_premium,
                     Colors.teal,
                         () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const BuyPackageScreen()),
+                          );
                     },
                   ),
                   const SizedBox(height: 12),
