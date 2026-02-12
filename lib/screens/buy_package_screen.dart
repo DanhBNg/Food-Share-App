@@ -103,7 +103,7 @@ class _BuyPackageScreenState extends State<BuyPackageScreen> {
     );
   }
 
-  /// ===== QR =====
+  /// QR
   void _showQrDialog() {
     final qrUrl = PaymentService.generateQrUrl(
       packageId: selectedPlan!.id,
@@ -150,7 +150,7 @@ class _BuyPackageScreenState extends State<BuyPackageScreen> {
     );
   }
 
-  /// ===== App payment (MoMo / ZaloPay link) =====
+  /// App payment (MoMo / ZaloPay link)
   Future<void> _payWithApp() async {
     final url = await PaymentService.generateAppPaymentUrl(
       packageId: selectedPlan!.id,
@@ -170,7 +170,7 @@ class _BuyPackageScreenState extends State<BuyPackageScreen> {
     );
   }
 
-  /// ===== Chọn phương thức =====
+  /// Chọn phương thức
   void _showPaymentMethodDialog() {
     showModalBottomSheet(
       context: context,
@@ -210,8 +210,13 @@ class _BuyPackageScreenState extends State<BuyPackageScreen> {
       backgroundColor: const Color(0xFFF6F6F6),
       appBar: AppBar(
         title: const Text("Mua gói đăng tin",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        centerTitle: true,
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18
+            )
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
           decoration: const BoxDecoration(

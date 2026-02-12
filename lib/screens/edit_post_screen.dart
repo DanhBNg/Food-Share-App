@@ -160,6 +160,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
