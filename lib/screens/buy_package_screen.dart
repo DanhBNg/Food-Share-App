@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../models/package_plan.dart';
 import '../services/payment_service.dart';
 
@@ -39,6 +40,17 @@ class _BuyPackageScreenState extends State<BuyPackageScreen> {
         return Icons.post_add;
     }
   }
+
+  final currencyFormatter = NumberFormat.currency(
+    locale: 'vi_VN',
+    symbol: 'đ',
+    decimalDigits: 0,
+  );
+
+  String formatPrice(int price) {
+    return currencyFormatter.format(price);
+  }
+
 
   Widget _planCard(PackagePlan p) {
     final selected = selectedPlan == p;
@@ -83,7 +95,7 @@ class _BuyPackageScreenState extends State<BuyPackageScreen> {
                     style: TextStyle(color: selected ? Colors.white70 : Colors.grey)),
               ]),
             ),
-            Text("${p.basePrice}đ",
+            Text(formatPrice(p.basePrice),
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: selected ? Colors.white : Colors.black)),
           ],
@@ -136,7 +148,7 @@ class _BuyPackageScreenState extends State<BuyPackageScreen> {
             const SizedBox(height: 12),
             Text("Gói: ${selectedPlan!.name} • $selectedPeople người",
                 style: const TextStyle(color: Colors.white)),
-            Text("Số tiền: $totalPrice đ",
+            Text("Số tiền: ${formatPrice(totalPrice)}",
                 style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             ElevatedButton(
@@ -256,7 +268,7 @@ class _BuyPackageScreenState extends State<BuyPackageScreen> {
             child: Row(children: [
               const Text("Tổng tiền:", style: TextStyle(color: Colors.white)),
               const Spacer(),
-              Text("$totalPrice đ",
+              Text(formatPrice(totalPrice),
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
             ]),
