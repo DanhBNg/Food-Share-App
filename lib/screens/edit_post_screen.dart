@@ -160,6 +160,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -317,18 +318,12 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     TextFormField(
                       controller: _descriptionController,
                       decoration: const InputDecoration(
-                        labelText: 'Mô tả *',
+                        labelText: 'Mô tả',
                         filled: true,
                         fillColor: Colors.white,
                         border: OutlineInputBorder(),
                       ),
                       maxLines: 4,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Vui lòng nhập mô tả';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 24),
 

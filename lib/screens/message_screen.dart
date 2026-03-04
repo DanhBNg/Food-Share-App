@@ -22,7 +22,7 @@ class MessageScreen extends StatelessWidget {
           fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+        backgroundColor: Colors.transparent,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(

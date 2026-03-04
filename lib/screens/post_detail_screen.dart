@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:food_share/screens/connect_screen.dart';
+import 'package:food_share/screens/rate_screen.dart';
 import '../models/post_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +32,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Colors.transparent, // ⚠️ bắt buộc
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.transparent,
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -44,6 +46,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
           ),
         ),
+
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
@@ -68,7 +71,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ),
                   ),
 
-                  // 👇 vô hiệu hóa nếu là bài của mình
+                  // vô hiệu hóa nếu là bài của mình
                   onPressed: isMyPost
                       ? null
                       : () {
@@ -105,6 +108,51 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Builder(
+                builder: (context) {
+                  return Align(
+                    alignment: Alignment.centerRight,
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Colors.black),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      icon: const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 18,
+                      ),
+                      label: const Text(
+                        "Đánh giá về nguười dùng này",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => RateScreen(
+                              userId: widget.post.userId,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+
               // Card hiển thị thông tin chính
               Card(
                 elevation: 4,
@@ -471,9 +519,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     if (!url.startsWith('http')) {
       url = 'https://$url';
     }
-
     final uri = Uri.parse(url);
-
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {

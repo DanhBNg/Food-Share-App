@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 5),
             Text(
-              'Nơi kết nối cộng đồng, giao lưu và chia sẻ nguyên liệu thực phẩm',
+              'Nơi kết nối cộng đồng, giao lưu và chia sẻ thực phẩm',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w400,
@@ -125,13 +125,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF4F8CFF),
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const PostScreen()),
           ).then((_) {
-            // Refresh list when returning from post screen
+            // Refresh list
             setState(() {});
           });
         },
