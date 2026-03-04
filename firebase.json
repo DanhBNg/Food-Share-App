@@ -1,1 +1,68 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"food-share-fce9b","appId":"1:459962607492:android:8a6806fa57470e5b9d5fd1","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"food-share-fce9b","configurations":{"android":"1:459962607492:android:8a6806fa57470e5b9d5fd1","ios":"1:459962607492:ios:0cd668f34487cb769d5fd1","macos":"1:459962607492:ios:0cd668f34487cb769d5fd1","web":"1:459962607492:web:8ebd76dbeba4286e9d5fd1","windows":"1:459962607492:web:f5cfd5e568c8bc339d5fd1"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "food-share-fce9b",
+          "appId": "1:459962607492:android:8a6806fa57470e5b9d5fd1",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "food-share-fce9b",
+          "configurations": {
+            "android": "1:459962607492:android:8a6806fa57470e5b9d5fd1",
+            "ios": "1:459962607492:ios:0cd668f34487cb769d5fd1",
+            "macos": "1:459962607492:ios:0cd668f34487cb769d5fd1",
+            "web": "1:459962607492:web:8ebd76dbeba4286e9d5fd1",
+            "windows": "1:459962607492:web:f5cfd5e568c8bc339d5fd1"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/.git/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/admin/**",
+        "destination": "/admin/index.html"
+      },
+      {
+        "source": "/app/**",
+        "destination": "/app/index.html"
+      },
+      {
+        "source": "/**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          }
+        ]
+      },
+      {
+        "source": "**/*.css",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=3600"
+          }
+        ]
+      }
+    ]
+  }
+}

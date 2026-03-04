@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Food Share App - Ứng dụng chia sẻ thực phẩm">
+    <title>Food Share - Mobile App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            margin: 0 auto 30px;
+            box-shadow: 0 10px 30px rgba(25, 118, 210, 0.3);
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 30px;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .info-box h3 {
+            font-size: 16px;
+            color: #1976D2;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+
+        .info-box code {
+            background: #e3f2fd;
+            color: #1976D2;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1976D2;
+            border: 2px solid #1976D2;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f7ff;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            font-size: 14px;
+            color: #666;
+            text-align: left;
+        }
+
+        .feature-item strong {
+            color: #1976D2;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 24px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-icon">🍲</div>
+        
+        <h1>Food Share App</h1>
+        <p class="subtitle">Ứng dụng chia sẻ thực phẩm - Kết nối yêu thương</p>
+        
+        <div class="status-badge">
+            🚧 Đang phát triển
+        </div>
+
+        <div class="info-box">
+            <h3>📱 Ứng dụng Flutter đang được xây dựng</h3>
+            <p>Hiện tại, ứng dụng mobile Food Share đang trong quá trình phát triển bằng Flutter. Để deploy phiên bản web của app Flutter, vui lòng:</p>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <strong>1️⃣ Build Web</strong>
+                    Chạy lệnh build Flutter web
+                </div>
+                <div class="feature-item">
+                    <strong>2️⃣ Copy Files</strong>
+                    Copy build/web vào public/app
+                </div>
+                <div class="feature-item">
+                    <strong>3️⃣ Deploy</strong>
+                    Deploy lên Firebase Hosting
+                </div>
+                <div class="feature-item">
+                    <strong>4️⃣ Test</strong>
+                    Kiểm tra app trên web
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box" style="margin-top: 20px;">
+            <h3>💻 Lệnh Build Flutter Web</h3>
+            <p>Mở terminal trong thư mục project và chạy:</p>
+            <p><code>flutter build web</code></p>
+            <p style="margin-top: 12px;">Sau đó copy nội dung từ <code>build/web/</code> vào <code>public/app/</code></p>
+            <p style="margin-top: 12px;"><code>Copy-Item -Path "build\web\*" -Destination "public\app\" -Recurse -Force</code></p>
+        </div>
+
+        <div class="buttons">
+            <a href="/admin/" class="btn btn-primary">
+                🔐 Admin Panel
+            </a>
+            <a href="/" class="btn btn-secondary">
+                🏠 Trang chủ
+            </a>
+        </div>
+
+        <p style="margin-top: 40px; color: #999; font-size: 13px;">
+            © 2026 Food Share - Built with Flutter & Firebase
+        </p>
+    </div>
+</body>
+</html>

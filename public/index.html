@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Share - Nền Tảng Chia Sẻ Thực Phẩm</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px 40px;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 48px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 18px;
+        }
+
+        .menu {
+            display: grid;
+            gap: 15px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .menu-item.admin {
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+        }
+
+        .menu-item.admin:hover {
+            box-shadow: 0 10px 30px rgba(25, 118, 210, 0.4);
+        }
+
+        .menu-item.app {
+            background: linear-gradient(135deg, #43a047 0%, #388e3c 100%);
+        }
+
+        .menu-item.app:hover {
+            box-shadow: 0 10px 30px rgba(67, 160, 71, 0.4);
+        }
+
+        .icon {
+            margin-right: 12px;
+            font-size: 24px;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .status {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍱 Food Share</h1>
+        <p class="subtitle">Nền Tảng Chia Sẻ Thực Phẩm</p>
+
+        <div class="status">
+            ✅ Hệ thống đang hoạt động bình thường
+        </div>
+
+        <div class="menu">
+            <a href="/admin/" class="menu-item admin">
+                <span class="icon">🔧</span>
+                <span>Admin Panel</span>
+            </a>
+            <a href="/app/" class="menu-item app">
+                <span class="icon">📱</span>
+                <span>Web App (Coming Soon)</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>© 2024 Food Share Platform. All rights reserved.</p>
+            <p>Powered by Firebase Hosting</p>
+        </div>
+    </div>
+</body>
+</html>

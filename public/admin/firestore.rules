@@ -1,0 +1,135 @@
+// Firestore Security Rules cho Food Share Admin Panel
+// Sao chép toàn bộ nội dung này vào Firebase Console → Firestore → Rules
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Hàm kiểm tra người dùng là admin
+    function isAdmin() {
+      return request.auth != null && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Admin';
+    }
+    
+    // Hàm kiểm tra người dùng đã đăng nhập
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // ====== USERS COLLECTION ======
+    match /users/{userId} {
+      // Admin có thể đọc tất cả users
+      allow read: if isAdmin();
+      
+      // User có thể đọc/ghi thông tin của chính mình
+      allow read, write: if request.auth.uid == userId;
+      
+      // Admin có thể cập nhật users
+      allow update: if isAdmin();
+      
+      // Admin có thể xóa users (thận trọng!)
+      allow delete: if isAdmin() && request.auth.uid != userId;
+    }
+    
+    // ====== POSTS COLLECTION ======
+    match /posts/{postId} {
+      // Tất cả người dùng đã đăng nhập có thể đọc posts
+      allow read: if isAuthenticated();
+      
+      // User chỉ có thể tạo post của chính mình
+      allow create: if isAuthenticated() && 
+                       request.resource.data.userId == request.auth.uid;
+      
+      // User có thể cập nhật post của chính mình
+      allow update: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid;
+      
+      // Admin có thể xóa bất kỳ post nào
+      allow delete: if isAdmin();
+      
+      // User chỉ có thể xóa post của chính mình
+      allow delete: if isAuthenticated() && 
+                       resource.data.userId == request.auth.uid;
+    }
+    
+    // ====== MESSAGES COLLECTION ======
+    match /messages/{messageId} {
+      // Chỉ những người tham gia cuộc trò chuyện mới có thể đọc
+      allow read: if isAuthenticated();
+      
+      // User chỉ có thể gửi tin nhắn của chính mình
+      allow create: if isAuthenticated() && 
+                       request.resource.data.senderId == request.auth.uid;
+      
+      // Admin có thể xóa tin nhắn không phù hợp
+      allow delete: if isAdmin();
+    }
+    
+    // ====== ADMIN LOGS ======
+    match /admin_logs/{logId} {
+      // Chỉ admin có thể đọc logs
+      allow read: if isAdmin();
+      
+      // Admin tự động tạo logs thông qua Cloud Functions
+      allow create: if false; // Phải dùng Cloud Functions
+    }
+    
+    // ====== DEFAULT DENY ALL ======
+    // Mặc định từ chối tất cả truy cập không được phép
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+/*
+ * ============= HƯỚNG DẪN SỬ DỤNG =============
+ * 
+ * 1. Vào Firebase Console: https://console.firebase.google.com
+ * 2. Chọn project "food-share-fce9b"
+ * 3. Vào Firestore Database → Rules tab
+ * 4. Xóa rules hiện tại
+ * 5. Dán toàn bộ đoạn code này
+ * 6. Bấm "Publish"
+ * 
+ * ============= CHI TIẾT RULES =============
+ * 
+ * - Admin Role:
+ *   • Có thể đọc/ghi tất cả dữ liệu
+ *   • Có thể xóa bất kỳ post nào
+ *   • Có thể xóa/vô hiệu hóa user
+ *   • Có thể xóa tin nhắn
+ * 
+ * - User Role:
+ *   • Có thể tạo posts của chính mình
+ *   • Có thể chỉnh sửa posts của chính mình
+ *   • Có thể xóa posts của chính mình
+ *   • Không thể truy cập dữ liệu admin
+ * 
+ * ============= TESTING RULES =============
+ * 
+ * Dùng Firestore Rules Simulator (bên phải Firebase Console):
+ * 
+ * Test 1: User đọc posts (ALLOW)
+ * - Service: Cloud Firestore
+ * - Document: /posts/post-id
+ * - Method: get
+ * - Authentication: any user ID
+ * Result: ✅ ALLOW
+ * 
+ * Test 2: User chỉnh sửa post của người khác (DENY)
+ * - Service: Cloud Firestore
+ * - Document: /posts/post-id (userId = other-user)
+ * - Method: update
+ * - Authentication: different user ID
+ * Result: ❌ DENY
+ * 
+ * Test 3: Admin xóa bất kỳ post (ALLOW)
+ * - Service: Cloud Firestore
+ * - Document: /posts/post-id
+ * - Method: delete
+ * - Authentication: admin user ID
+ * Result: ✅ ALLOW
+ * 
+ */

@@ -6,6 +6,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'firebase_options.dart';
 import 'screens/login_screen.dart';
 import 'screens/main_screen.dart';
+import 'screens/manage_posts_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,9 +23,10 @@ void main() async {
 
   await Supabase.initialize(
     url: 'https://tyjrrphjrqkhdlupzxan.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5anJycGhqcnFraGRsdXB6eGFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDM0ODksImV4cCI6MjA4NDcxOTQ4OX0.cwsCnGwBCmRuFanEJeVddeUbNEPeoIj7HSF1zRMwTQw',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR5anJycGhqcnFraGRsdXB6eGFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxNDM0ODksImV4cCI6MjA4NDcxOTQ4OX0.cwsCnGwBCmRuFanEJeVddeUbNEPeoIj7HSF1zRMwTQw',
   );
-  
+
   runApp(const MyApp());
 }
 
@@ -35,6 +37,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/manage_posts': (context) => const ManagePostsScreen(),
+      },
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
